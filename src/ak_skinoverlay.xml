@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShaderNodePreset 
+	SupportsAdaptiveDegradation="False" 
+	SupportsAction="False" 
+	SupportsTransition="False" 
+	SupportsTimeline="False" 
+	TimelineUseBack="False" 
+	MatteProvider="False" 
+	CommercialUsePermitted="True" 
+	ShaderType="Matchbox" 
+	SoftwareVersion="2017.0.0" 
+	LimitInputsToTexture="True" 
+	Version="1" 
+	Description="Displays a hue difference overlay from the skintone line
+	
+	To use, add after Mastergrade or other operators, use as context view while adjusting grade.
+	Goal is to center the skintone in image with the best overlay coverage. Either shift entire
+	image or use curves and keyers to address only specific ranges.
+	
+	Boundary color are to making over and under more obvious.
+	
+	Adjust tolerance to your needs. Default of 1.5 is a narror range for precision.
+
+	Utilize the HighPass Filter and the post processes to reduce a noisy mask.
+
+	HighPass Filter ignors any pixels where either of the HSV values are below threshold, which
+	often make for unreliable hue readings.
+
+	Post processes can blur, erode or dialte the mask.
+
+	The input gamma has no effect on the math of the mask, it soley influeces the overlay colors.
+	
+	Matchbox shader by Jan Klier https://www.janklier.com
+	
+	Blur filter based on Pyramid blur in ADSK shader samples
+	Erode/Dialte filter based on code from https://github.com/kajott/GIPS"
+	Name="AK Skintone Overlay">
+   <Shader GridSubdivision="1" OutputBitDepth="Output" Index="1">
+	<Uniform 
+		Index="0" 
+		NoInput="Error" 
+		DisplayName="Source"
+		Mipmaps="False"
+		GL_TEXTURE_WRAP_T="GL_REPEAT"
+		GL_TEXTURE_WRAP_S="GL_REPEAT"
+		GL_TEXTURE_MAG_FILTER="GL_NEAREST"
+		GL_TEXTURE_MIN_FILTER="GL_NEAREST"
+		Type="sampler2D"
+		Name="input1">
+	</Uniform>
+	<Uniform
+		ResDependent="None"
+		Max="1.0"
+		Min="0.0"
+		Default="0.075"
+		ToolTip="in 0 - 1 in HSV space"
+		Row="0"
+		Col="0"
+		Page="0"
+		DisplayName="Skin Hue"
+		Type="float"
+		Name="skin_hue">
+	</Uniform>
+	<Uniform
+		ResDependent="None"
+		Max="100"
+		Min="0"
+		Default="1.5"
+		Inc="0.25"
+		ToolTip="in percent center of skin hue"
+		Row="1"
+		Col="0"
+		Page="0"
+		DisplayName="Tolerance"
+		Type="float"
+		Name="tolerance">
+	</Uniform>
+	<Uniform
+		ResDependent="None"
+		Max="1.0"
+		Min="0.0"
+		Default="0.005"
+		Inc="0.001"
+		ToolTip="Filter noisy hue"
+		Row="2"
+		Col="0"
+		Page="0"
+		DisplayName="High Pass Filter"
+		Type="float"
+		Name="low_threshold">
+	</Uniform>
+	<Uniform
+		Max="1"
+		Min="0"
+		Default="0"
+		Inc="1"
+		Row="3"
+		Col="0"
+		Page="0"
+		Type="int"
+		ChannelName="gamma"
+		DisplayName="Input Gamma"
+		Name="gamma"
+		ValueType="Popup">
+		<PopupEntry Title="Linear" Value="0"></PopupEntry>
+		<PopupEntry Title="Video" Value="1"></PopupEntry>
+	</Uniform>
+	<Uniform
+		ResDependent="None"
+		Max="100"
+		Min="0"
+		Default="40"
+		Inc="1"
+		ToolTip="Opacity"
+		Row="0"
+		Col="1"
+		Page="0"
+		DisplayName="Overlay Opacity"
+		Type="float"
+		Name="opacity">
+	</Uniform>
+	<Uniform
+		Type="bool"
+		DisplayName="Show Boundary"
+		Default="True"
+		ToolTip="Show secondary color at 2x tolerance"
+		Row="1"
+		Col="1"
+		Page="0"
+		Name="show_boundary">
+	</Uniform>
+   </Shader>
+   <Shader GridSubdivision="1" OutputBitDepth="Output" Index="2">
+	<Uniform
+		ResDependent="None"
+		Type="float"
+		DisplayName="Overlay Blur"
+		Max="20.0"
+		Min="0.0"
+		Default="0.0"
+		Inc="0.1"
+		ToolTip=""
+		Row="0"
+		Col="2"
+		Page="0"
+		Name="blur_value">
+	</Uniform>
+   </Shader>
+   <Shader GridSubdivision="1" OutputBitDepth="Output" Index="3">
+	<Uniform
+		Type="float"
+		Name="blur_value">
+	  <Duplicate></Duplicate>
+	</Uniform>
+   </Shader>
+   <Shader GridSubdivision="1" OutputBitDepth="Output" Index="4">
+	<Uniform
+		Max="2"
+		Min="0"
+		Default="0"
+		Inc="1"
+		Row="1"
+		Col="2"
+		Page="0"
+		Type="int"
+		ChannelName="matte_process"
+		DisplayName="Post Process"
+		Name="matte_process"
+		ValueType="Popup">
+		<PopupEntry Title="Off" Value="0"></PopupEntry>
+		<PopupEntry Title="Dilate" Value="1"></PopupEntry>
+		<PopupEntry Title="Erode" Value="2"></PopupEntry>
+	</Uniform>
+	<Uniform
+		ResDependent="None"
+		Type="float"
+		DisplayName="Strength"
+		Max="10.0"
+		Min="0.0"
+		Inc="0.25"
+		Default="1.5"
+		ToolTip="Filter Strength"
+		Row="2"
+		Col="2"
+		Page="0"
+		Name="erode_size">
+	</Uniform>
+   </Shader>		
+   <Shader GridSubdivision="1" OutputBitDepth="Output" Index="5">
+	<Uniform
+		Type="int"
+		Name="matte_process">
+	  <Duplicate></Duplicate>
+	</Uniform>
+	<Uniform
+		Type="float"
+		Name="erode_size">
+	  <Duplicate></Duplicate>
+	</Uniform>
+   </Shader>
+   <Page Name="Main" Page="0">
+      <Col Name="Setup" Col="0" Page="0">
+      </Col>
+      <Col Name="Overlays" Col="1" Page="0">
+      </Col>
+      <Col Name="Post Process" Col="2" Page="0">
+      </Col>
+    </Page>
+</ShaderNodePreset>
